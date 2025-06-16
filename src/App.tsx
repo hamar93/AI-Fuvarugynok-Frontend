@@ -10,6 +10,9 @@ import Search from './pages/Search';
 import DriverAdd from './pages/DriverAdd';
 import DriverStats from './pages/DriverStats';
 import DriverAI from './pages/DriverAI';
+import DriverAssign from './pages/DriverAssign';
+import TrailerStatus from './pages/TrailerStatus';
+import FairDistribution from './pages/FairDistribution';
 import SubcontractorAdd from './pages/SubcontractorAdd';
 import Assign from './pages/Assign';
 import Docs from './pages/Docs';
@@ -34,6 +37,9 @@ export default function App() {
           <Route path="driver-add" element={<DriverAdd />} />
           <Route path="driver-stats" element={<DriverStats />} />
           <Route path="driver-ai" element={<DriverAI />} />
+          <Route path="driver-assign" element={<DriverAssign />} />
+<Route path="trailer-status" element={<TrailerStatus />} />
+<Route path="fair-distribution" element={<FairDistribution />} />
           <Route path="subcontractor-add" element={<SubcontractorAdd />} />
           <Route path="assign" element={<Assign />} />
           <Route path="docs" element={<Docs />} />
