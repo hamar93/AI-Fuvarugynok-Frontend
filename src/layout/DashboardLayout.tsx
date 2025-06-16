@@ -95,7 +95,10 @@ export default function DashboardLayout() {
             <h2 style={{ fontSize: '1.2rem' }}>🚚 Fuvarügynök</h2>
             <ul style={{ listStyle: 'none', padding: 0 }}>
               <li><Link style={linkStyle} to="/dashboard">Dashboard – Áttekintés</Link></li>
-              {sections.map((section) => (
+              {[{ title: "Hibák", items: [
+      { to: "/dashboard/driver-report", label: "Új hiba bejelentése" },
+      { to: "/dashboard/issue-list", label: "Bejelentett hibák" }
+    ] }, ...sections].map((section) => (
                 <li key={section.title}>
                   <button onClick={() => toggleSection(section.title)} style={buttonStyle}>
                     {section.title} ▾
