@@ -1,18 +1,67 @@
 import React, { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
-const greetings = [
-  "A fuvar nem vár – de te irányítod.",
-  "A legjobb sofőr a nyugodt sofőr.",
-  "Az adat mögött mindig ember van.",
-  "Minden sikeres nap egy jól kiosztott fuvarral kezdődik.",
-  "Jó úton jársz – folytasd így!"
+const sections = [
+  {
+    title: "Fuvarok",
+    items: [
+      { to: "/dashboard/active", label: "Aktív fuvarok" },
+      { to: "/dashboard/completed", label: "Befejezett fuvarok" },
+      { to: "/dashboard/upload", label: "Fuvarfeltöltés" },
+      { to: "/dashboard/search", label: "Fuvarkeresés" },
+      { to: "/dashboard/trailer-status", label: "Pótkocsi állapot" }
+    ]
+  },
+  {
+    title: "Sofőrök",
+    items: [
+      { to: "/dashboard/driver-add", label: "Sofőr hozzáadása" },
+      { to: "/dashboard/driver-assign", label: "Fuvar hozzárendelés" },
+      { to: "/dashboard/driver-stats", label: "Fuvarstatisztika" },
+      { to: "/dashboard/driver-ai", label: "AI kérdezés" },
+      { to: "/dashboard/driver-chat", label: "Sofőr chat" }
+    ]
+  },
+  {
+    title: "Alvállalkozók",
+    items: [
+      { to: "/dashboard/subcontractor-add", label: "Új alvállalkozó" },
+      { to: "/dashboard/assign", label: "Fuvar kiosztása" },
+      { to: "/dashboard/subcontractor-status", label: "Állapot: úton, lerakva" },
+      { to: "/dashboard/subcontractor-list", label: "Meglévő alvállalkozók" },
+      { to: "/dashboard/subcontractor-chat", label: "Alvállalkozó chat" }
+    ]
+  },
+  {
+    title: "Rendszer",
+    items: [
+      { to: "/dashboard/incoming", label: "Bejövő számlák" },
+      { to: "/dashboard/outgoing", label: "Kimenő számlák" },
+      { to: "/dashboard/fair-distribution", label: "AI kiosztási logika" },
+      { to: "/dashboard/profile", label: "Profil / AI státusz" }
+    ]
+  },
+  {
+    title: "Statisztikák",
+    items: [
+      { to: "/dashboard/driver-performance", label: "Sofőr teljesítmény" },
+      { to: "/dashboard/weekly-summary", label: "Heti fuvarösszesítő" },
+      { to: "/dashboard/status-chart", label: "Állapotmegoszlás" }
+    ]
+  },
+  {
+    title: "Dokumentumok",
+    items: [
+      { to: "/dashboard/cmr-upload", label: "CMR feltöltés" },
+      { to: "/dashboard/assignments", label: "Fuvarmegbízások" },
+      { to: "/dashboard/invoices-pdf", label: "Számlák (PDF)" }
+    ]
+  }
 ];
 
 export default function DashboardLayout() {
   const [collapsed, setCollapsed] = useState(false);
-  const [greeting] = useState(() => greetings[Math.floor(Math.random() * greetings.length)]);
-  const [openSections, setOpenSections] = useState<string[]>(["Fuvarok", "Sofőrök", "Alvállalkozók"]);
+  const [openSections, setOpenSections] = useState<string[]>(sections.map(s => s.title));
 
   const toggleSection = (section: string) => {
     setOpenSections(prev =>
@@ -41,52 +90,30 @@ export default function DashboardLayout() {
         }}>
           ☰
         </button>
-        {!collapsed && <h2 style={{ fontSize: '1.2rem' }}>🚚 Fuvarügynök</h2>}
-        <ul style={{ listStyle: 'none', padding: 0, fontSize: collapsed ? '0.8rem' : '1rem' }}>
-          {!collapsed && (
-            <>
+        {!collapsed && (
+          <>
+            <h2 style={{ fontSize: '1.2rem' }}>🚚 Fuvarügynök</h2>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
               <li><Link style={linkStyle} to="/dashboard">Dashboard – Áttekintés</Link></li>
-              <li><button onClick={() => toggleSection("Fuvarok")} style={buttonStyle}>Fuvarok ▾</button></li>
-              {openSections.includes("Fuvarok") && (
-                <>
-                  <li><Link style={linkStyle} to="/dashboard/active">Aktív fuvarok</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/completed">Befejezett fuvarok</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/upload">Fuvarfeltöltés</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/search">Fuvarkeresés</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/trailer-status">Pótkocsi állapot</Link></li>
-                </>
-              )}
-              <li><button onClick={() => toggleSection("Sofőrök")} style={buttonStyle}>Sofőrök ▾</button></li>
-              {openSections.includes("Sofőrök") && (
-                <>
-                  <li><Link style={linkStyle} to="/dashboard/driver-add">Sofőr hozzáadása</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/driver-assign">Fuvar hozzárendelés</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/driver-stats">Fuvarstatisztika</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/driver-ai">AI kérdezés</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/driver-chat">Sofőr chat</Link></li>
-                </>
-              )}
-              <li><button onClick={() => toggleSection("Alvállalkozók")} style={buttonStyle}>Alvállalkozók ▾</button></li>
-              {openSections.includes("Alvállalkozók") && (
-                <>
-                  <li><Link style={linkStyle} to="/dashboard/subcontractor-add">Új alvállalkozó</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/subcontractor-list">Meglévő alvállalkozók</Link></li>
-                  <li><Link style={linkStyle} to="/dashboard/subcontractor-chat">Alvállalkozó chat</Link></li>
-                </>
-              )}
-              <li><Link style={linkStyle} to="/dashboard/incoming">Bejövő számlák</Link></li>
-              <li><Link style={linkStyle} to="/dashboard/outgoing">Kimenő számlák</Link></li>
-              <li><Link style={linkStyle} to="/dashboard/fair-distribution">AI kiosztási logika</Link></li>
-              <li><Link style={linkStyle} to="/dashboard/profile">Profil / AI státusz</Link></li>
-            </>
-          )}
-        </ul>
+              {sections.map((section) => (
+                <li key={section.title}>
+                  <button onClick={() => toggleSection(section.title)} style={buttonStyle}>
+                    {section.title} ▾
+                  </button>
+                  {openSections.includes(section.title) && (
+                    <ul style={{ listStyle: 'none', paddingLeft: '1rem' }}>
+                      {section.items.map((item) => (
+                        <li key={item.to}><Link style={linkStyle} to={item.to}>{item.label}</Link></li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </nav>
       <main style={{ flex: 1, padding: '1rem', overflowY: 'auto', background: '#f8fafc' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-          <h2>Üdvözlünk, Partner!</h2>
-          <em style={{ fontStyle: 'italic', color: '#64748b' }}>{greeting}</em>
-        </div>
         <Outlet />
       </main>
     </div>
@@ -106,7 +133,7 @@ const buttonStyle = {
   color: '#1e293b',
   cursor: 'pointer',
   padding: 0,
-  margin: '0.3rem 0',
+  margin: '0.5rem 0',
   fontSize: '1rem',
   fontWeight: 'bold'
 };
