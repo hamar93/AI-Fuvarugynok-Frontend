@@ -1,28 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const inspirationalQuotes = [
-  "A világ rohan – itt most megállhatsz egy pillanatra.",
-  "Néha a legjobb döntés az, ha előbb megállsz, és utána indulsz.",
-  "A fuvar nem csak célpont, hanem felelősség is.",
-  "A jó logisztika láthatatlan – de mindenki érzi, ha működik."
+  "A jó logisztika láthatatlan – de mindenki érzi, ha működik.",
+  "A fuvar több, mint szállítás – ez kapcsolat az országok között.",
+  "Egy jól kiosztott fuvar fél siker.",
+  "A sofőr nem csak vezet – ő tartja mozgásban az országot."
 ];
 
-const shipments = [
-  { from: "Budapest", to: "München", date: "Apr. 24", status: "Folyamatban" },
-  { from: "Debrecen", to: "Vienna", date: "Apr. 21", status: "Teljesítve" },
-  { from: "Győr", to: "Milan", date: "Apr. 15", status: "Teljesítve" }
+const initialShipments = [
+  {
+    id: 1,
+    from: "Budapest", to: "München", date: "Apr. 24", status: "Folyamatban",
+    driver: "Kovács László", tractor: "ABC-123", trailer: "DEF-456",
+    loadCompany: "Metro Budapest raktár", loadTime: "2025-04-24 08:00",
+    unloadCompany: "Lidl München központ", unloadTime: "2025-04-25 10:00"
+  },
+  {
+    id: 2,
+    from: "Debrecen", to: "Vienna", date: "Apr. 21", status: "Teljesítve",
+    driver: "Szabó Anna", tractor: "XYZ-987", trailer: "GHI-654",
+    loadCompany: "Kika Debrecen", loadTime: "2025-04-21 07:00",
+    unloadCompany: "XXL Vienna", unloadTime: "2025-04-22 09:00"
+  },
+  {
+    id: 3,
+    from: "Győr", to: "Milan", date: "Apr. 15", status: "Teljesítve",
+    driver: "Kiss Gergely", tractor: "MNO-456", trailer: "JKL-789",
+    loadCompany: "Audi Logisztika", loadTime: "2025-04-15 06:00",
+    unloadCompany: "IKEA Milan", unloadTime: "2025-04-16 13:00"
+  }
 ];
 
 export default function DashboardOverview() {
-  const quote = inspirationalQuotes[Math.floor(Math.random() * inspirationalQuotes.length)];
+  const [quote] = useState(() => inspirationalQuotes[Math.floor(Math.random() * inspirationalQuotes.length)]);
+  const [shipments, setShipments] = useState(initialShipments);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  const handleToggle = (id: number) => {
+    setExpandedId(prev => prev === id ? null : id);
+  };
+
+  const handleArchive = (id: number) => {
+    const toArchive = shipments.find(s => s.id === id);
+    if (toArchive) {
+      const archived = JSON.parse(localStorage.getItem("archivedShipments") || "[]");
+      archived.push(toArchive);
+      localStorage.setItem("archivedShipments", JSON.stringify(archived));
+      setShipments(shipments.filter(s => s.id !== id));
+    }
+  };
 
   return (
-    <div style={{
-      backgroundColor: '#f3fdf4',
-      padding: '2rem',
-      minHeight: '100vh',
-      fontFamily: 'sans-serif'
-    }}>
+    <div style={{ backgroundColor: '#f3fdf4', padding: '2rem', minHeight: '100vh', fontFamily: 'sans-serif' }}>
       <div style={{
         maxWidth: '960px',
         margin: '0 auto',
@@ -43,68 +72,49 @@ export default function DashboardOverview() {
           {quote}
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h3 style={{ fontSize: '1.1rem', color: '#065f46' }}>Legutóbbi fuvarok</h3>
-          <button style={{
-            backgroundColor: '#166534',
-            color: 'white',
-            padding: '0.5rem 1rem',
-            fontSize: '0.9rem',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer'
-          }}>
-            Új fuvar hozzáadása
-          </button>
-        </div>
+        <h3 style={{ fontSize: '1.1rem', color: '#065f46', marginBottom: '1rem' }}>Legutóbbi fuvarok</h3>
 
-        <table style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          backgroundColor: '#ffffff',
-          borderRadius: '8px',
-          overflow: 'hidden'
-        }}>
-          <thead style={{ backgroundColor: '#bbf7d0', color: '#064e3b' }}>
-            <tr>
-              <th style={thStyle}>Felrakodás</th>
-              <th style={thStyle}>Lerakodás</th>
-              <th style={thStyle}>Dátum</th>
-              <th style={thStyle}>Állapot</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shipments.map((s, i) => (
-              <tr key={i} style={{ textAlign: 'center', borderBottom: '1px solid #e5e7eb' }}>
-                <td style={tdStyle}>{s.from}</td>
-                <td style={tdStyle}>→ {s.to}</td>
-                <td style={tdStyle}>{s.date}</td>
-                <td style={tdStyle}>
-                  <span style={{
-                    backgroundColor: s.status === 'Teljesítve' ? '#bbf7d0' : '#defbe6',
-                    color: s.status === 'Teljesítve' ? '#166534' : '#166534',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '999px',
-                    fontSize: '0.85rem',
-                    fontWeight: 'bold'
-                  }}>{s.status}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {shipments.map((s) => (
+          <div key={s.id} style={{
+            backgroundColor: '#ffffff',
+            border: '1px solid #d1fae5',
+            borderRadius: '8px',
+            marginBottom: '1rem',
+            padding: '1rem',
+            cursor: 'pointer'
+          }} onClick={() => handleToggle(s.id)}>
+            <div style={{ fontWeight: 'bold', color: '#065f46' }}>
+              🚚 {s.driver} – {s.from} → {s.to} – {s.status} {expandedId === s.id ? "▾" : "▸"}
+            </div>
+            {expandedId === s.id && (
+              <div style={{ marginTop: '0.5rem', color: '#374151' }}>
+                <div>🕓 Dátum: {s.date}</div>
+                <div>🚛 Vontató: {s.tractor} | Pótkocsi: {s.trailer}</div>
+                <div>🏭 Felrakás: {s.loadCompany} – {s.loadTime}</div>
+                <div>🏢 Lerakás: {s.unloadCompany} – {s.unloadTime}</div>
+                {s.status === "Teljesítve" && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleArchive(s.id); }}
+                    style={{
+                      marginTop: '0.75rem',
+                      backgroundColor: '#065f46',
+                      color: 'white',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}>
+                    Archiválás
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+        {shipments.length === 0 && (
+          <div style={{ padding: '1rem', color: '#6b7280' }}>Nincs aktív fuvar.</div>
+        )}
       </div>
     </div>
   );
 }
-
-const thStyle = {
-  padding: '0.75rem',
-  fontSize: '1rem'
-};
-
-const tdStyle = {
-  padding: '0.75rem',
-  fontSize: '0.95rem',
-  color: '#1f2937'
-};
